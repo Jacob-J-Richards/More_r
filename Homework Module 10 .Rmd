@@ -1,9 +1,12 @@
 ---
-title: "Untitled"
-output: html_document
-date: "2024-10-26"
+title: "Module 10 Homework"
+author: "Jacob Richards"
+output:
+  pdf_document: 
+geometry: margin=0.5in
 ---
-1.) (Use R) Consider the following data describing the sales of some items at a hardware
+
+(1) (Use R) Consider the following data describing the sales of some items at a hardware
 store. The variable names are the order number, the item, the region, the price and the
 quantity, respectively. Input this data, and create a new variable called total_sales which is the product between price and quantity. Finally, print your new dataset.
 ```{r}
@@ -21,19 +24,35 @@ final_dataset <- cbind(data,total_sales)
 
 print(final_dataset)
 ```
-2.) (Use R) Write a code to read in the dataset called “baseball.” The variables for each
+\pagebreak
+(2) (Use R) Write a code to read in the dataset called “baseball.” The variables for each
 observation, in order, are: first name, last name, height(feet-inches), weight(pounds),
 position, number of years on team, birthdate, and date they joined the starting lineup (if
 ever). Print the entire data set with the players sorted by position (alphabetically), and by
 years on the team within each position (list most experienced players first).
 ```{r}
-
+baseball <- read.table("/Users/jacobrichards/Desktop/Stat_405_R/Stat 405 M10 HW/baseball.txt", sep = "", header = TRUE, fill = TRUE)
+baseball <- baseball[order(baseball[,5]),]
+(baseball <- baseball[order(-baseball[,6]),])
 ```
-
-
-
-
-4.) (Use R) Consider the data set ‘exchange rates’ contains exchange rates from widely
+\pagebreak
+(3) (Use R) The data called “data3_6.csv” describes the performance of some
+students who applied for graduate studies. The students were asked to perform services,
+and they were classified by the supervisors as ‘Upper Star’ or ‘Standard’. Along that
+information, it was recorded the month when the volunteering was performed, name (first
+and last), the recommended level, the number of hours of services, and the average score
+at the end of the service. Some students were able to serve at 2 or more places.
+(a) Find the average score for each student.
+(b) Find the average score for each month.
+```{r}
+students <- as.data.frame(read.csv(file = "/Users/jacobrichards/Desktop/Stat_405_R/Stat 405 M10 HW/data3_6(1).csv", header = TRUE))
+(Fred_average_score <- mean(students[students[,2] == "Fred Kent",5]))
+(Mike_average_score <- mean(students[students[,2] == "Mike Smith",5]))
+(Alicia_average_score <- mean(students[students[,2] == "Alicia Jones",5]))
+(month_means <- tapply(students[,5], students[,1], mean)[month.name])
+```
+\pagebreak
+(4) (Use R) Consider the data set ‘exchange rates’ contains exchange rates from widely
 traded rates of 22 different countries: US, Japan, Euro, and so on, on consecutive days.
 Make a table of the average rate for each country per year.
 ```{r, ECHO=FALSE}
@@ -58,9 +77,11 @@ for (i in 1:15) {
 year_means <- cbind(years,means)
 colnames(year_means) <- colnames(mat)
 print(year_means)
+#see page after output
 ```
+\pagebreak
 **undergraduate extra credit**
-5.) (Use R) This problem is required for Grad students (those of you registered in
+(5) (Use R) This problem is required for Grad students (those of you registered in
 STAT 505) but can be extra credit for undergrad students. 
 A researcher needs your expertise to combine the so called SRH (Health rate) before and
 after a treatment. A random sample of size n = 2000 individuals were selected. A random
@@ -78,7 +99,7 @@ weight_treatment <- as.data.frame(read.csv(file = "/Users/jacobrichards/Desktop/
 ```
 
 ```{r}
-#multiple input arguments of an order function will be mutually satisfied, where if a condtion is passed: the partiton indicated by a TRUE will be ordered in aescending. As both conditions of the order must be mutually satisfied, the ordering of id is preserved while Post is ordered in aescending (after pre).
+#conditions of the sort functions will be mutually satisfied, the "SRH[,3] == "POST" will order these rows in in aesending while still satisfying the ordering of the ID column 
 
 SRH_id_sorted <- SRH[order(SRH[,1], SRH[,3] == "POST"), ]
 
@@ -86,44 +107,39 @@ WC_id_sorted <- weight_control[order(weight_control[,1]),]
 
 WT_id_sorted <- weight_treatment[order(weight_treatment[,1]),]
 
-(ID_Pre_WT <- na.omit(WT_id_sorted[,1:2]))
+Pre_WT <- na.omit(WT_id_sorted[,1:2]) 
 
-(ID_Post_WT <- na.omit(WT_id_sorted[,c(1,3)]))
+Post_WT <- na.omit(WT_id_sorted[,c(1,3)])
 
-ID_Pre_WC <- na.omit(WC_id_sorted[,1:2])
+Pre_WC <- na.omit(WC_id_sorted[,1:2])
 
-ID_Post_WC <- na.omit(WC_id_sorted[,c(1,3)])
-
+Post_WC <- na.omit(WC_id_sorted[,c(1,3)])
 
 Append <- numeric(nrow(SRH_id_sorted))
 
 Final <- cbind(SRH_id_sorted,Append)
 
+Final[Final[,3] == "PRE",5] <- Pre_WT[,2]
 
-final[,4] <- 
+Final[Final[,3] == "POST",5] <- Post_WT[,2]
 
+Pre_WC_id_nums <- Pre_WC[,1]
 
-# Sample data
-data <- data.frame(
-  id = c(1, 2, 3, 4, 5),
-  group = c("A", "B", "A", "B", "A"),
-  score = c(75, 90, 88, 85, 78)
-)
+Post_WC_id_nums <- Post_WC[,1]
 
-# Sort by group ("A" first), then prioritize scores above 80
-data_sorted <- data[order(data$group == "A", data$score > 80), ]
-print(data_sorted)
+Final[which(Final[,1] %in% Pre_WC_id_nums & Final[,3] %in% "PRE"),5] <- Pre_WC[,2]
 
+Final[which(Final[,1] %in% Post_WC_id_nums & Final[,3] %in% "POST"),5] <- Post_WC[,2]
 
+trt <- Final[,2]
 
+time <- Final[,3]
 
+Final[,2] <- time
 
+Final[,3] <- trt
+
+colnames(Final) <- c("id","time","trt","SRH","weight")
+
+head(Final,10)
 ```
-
-
-
-
-
-
-
-
